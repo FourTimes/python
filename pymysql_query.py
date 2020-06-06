@@ -12,7 +12,6 @@ def insert(query):
         cursor.execute(query)
         connection.commit()
         records = connection.affected_rows()
-        connection.close()
 
         return records
 
@@ -21,6 +20,8 @@ def insert(query):
 
     except pymysql.err.OperationalError as error:
         print("Error: {}".format(str(error)))
+    finally:
+        connection.close()
 
 def select(query):
     try:
@@ -33,7 +34,6 @@ def select(query):
         cursor = connection.cursor()
         cursor.execute(query)
         result = cursor.fetchall()
-        connection.close()
         return result
 
     except pymysql.err.DatabaseError as DatabaseError:
@@ -42,12 +42,16 @@ def select(query):
     except pymysql.err.OperationalError as error:
         print("Error: {}".format(str(error)))
 
+    finally:
+        connection.close()
+
 
 # Call INSERT FUNCTION
 
 insert_details = insert("INSERT INTO details (id, name) VALUES (2, 'JOE JINO')")
 print("Number of records inserted: {}".format(insert_details))
 
+# Call SELECT FUNCTION
 
 select_details = select('SELECT * FROM details')
 
